@@ -46,7 +46,10 @@ public class Mobile extends Controller
 				// send desktop message that mobile was connected
 				MessageService messageService = new MessageService();
 				JsonNode mobileConnected = messageService.createMobileConnectedMessage(player);
-				player.getDesktopOut().write(mobileConnected);
+				if (player.getDesktopOut() != null)
+				{
+					player.getDesktopOut().write(mobileConnected);
+				}
 
 				// handle
 				in.onMessage(

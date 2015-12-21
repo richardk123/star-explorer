@@ -27,7 +27,7 @@ public class PlayerService
 		player.setDefAngleY(mobileData.get(Mobile.ROTATION_Y).asDouble());
 		player.setDefAngleZ(mobileData.get(Mobile.ROTATION_Z).asDouble());
 		player.setGameStarted(true);
-		player.setSpeed(0.03);
+		player.setSpeed(0.01);
 	}
 
 	/**
