@@ -1,0 +1,15 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                           controllers.Desktop.index()
+GET     /desktop/ws                                 controllers.Desktop.ws(keyConnector)
+GET     /assets/javascripts/desktop-ws.js           controllers.Desktop.wsJs(keyConnector)
+
+GET     /mobile                                     controllers.Mobile.index(keyConnector)
+GET     /mobile/ws                                  controllers.Mobile.ws(keyConnector)
+GET     /assets/javascripts/mobile-ws.js            controllers.Mobile.wsJs(keyConnector)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                               controllers.Assets.at(path="/public", file)

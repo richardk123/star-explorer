@@ -1,0 +1,17 @@
+@(keyConnector: String)
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.11.3.min.js")" type="text/javascript"></script>
+        <script type="text/javascript" charset="utf-8" src="@routes.Mobile.wsJs(keyConnector)"></script>
+    </head>
+    <body>
+
+        <h1>this is mobile page</h1>
+
+    </body>
+</html>
