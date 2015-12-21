@@ -3,7 +3,7 @@
 $(function init() {
 
     var scene, camera, renderer, player;
-    var keyConnector = @keyConnector;
+    var keyConnector = '@keyConnector';
 
     var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
     var desktopSocket = new WS("@routes.Desktop.ws(keyConnector).webSocketURL(request)")
