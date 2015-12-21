@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import model.Player;
 import model.PlayerService;
@@ -19,8 +21,8 @@ public class Desktop extends Controller {
 
     public Result index() {
 
-//        String keyConnector = UUID.randomUUID().toString();
-        return ok(desktop.render("1"));
+        String keyConnector = UUID.randomUUID().toString();
+        return ok(desktop.render(keyConnector.substring(0, 3)));
     }
 
     public Result wsJs(final String keyConnector) {
@@ -47,8 +49,21 @@ public class Desktop extends Controller {
 
                                 switch (mobileData.get(TYPE_FIELD).asText())
                                 {
-                                    case TYPE_GAME_STARTED: service.initPlayerData(player);
+                                    case TYPE_GAME_STARTED:
+                                        service.initPlayerData(player);
                                 }
+                            }
+                        }
+                );
+
+
+                in.onClose(
+                        new F.Callback0()
+                        {
+                            @Override
+                            public void invoke() throws Throwable
+                            {
+                                PlayersHolder.getInstance().remove(keyConnector);
                             }
                         }
                 );

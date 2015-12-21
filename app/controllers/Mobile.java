@@ -37,6 +37,7 @@ public class Mobile extends Controller
 	public WebSocket<JsonNode> ws(final String keyConnector) {
 		return new WebSocket<JsonNode>() {
 
+			@Override
 			public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
 
 				// add mobile connection to holder
@@ -61,6 +62,17 @@ public class Mobile extends Controller
 									case TYPE_SENSOR_DATA: service.updatePlayerData(player, mobileData); break;
 								}
 
+							}
+						}
+				);
+
+				in.onClose(
+						new F.Callback0()
+						{
+							@Override
+							public void invoke() throws Throwable
+							{
+								PlayersHolder.getInstance().remove(keyConnector);
 							}
 						}
 				);

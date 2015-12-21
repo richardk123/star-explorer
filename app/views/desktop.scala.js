@@ -32,16 +32,29 @@ $(function init() {
         }
         else if (data.type === 'playerData')
         {
+            var playerToMove;
+
             if (data.keyConnector == keyConnector)
             {
-                player.rotation.x = data.angleX;
-                player.rotation.y = data.angleY;
-                player.rotation.z = data.angleZ;
-
-                player.position.x += data.vX;
-                player.position.y += data.vY;
-                player.position.z += data.vZ;
+                playerToMove = player;
             }
+            else
+            {
+                if (planes[data.keyConnector] == undefined)
+                {
+                    planes[data.keyConnector] = createCube(data.x, data.y, data.z, true, 0xFF0000);
+                }
+
+                playerToMove = planes[data.keyConnector];
+            }
+
+            playerToMove.rotation.x = data.angleX;
+            playerToMove.rotation.y = data.angleY;
+            playerToMove.rotation.z = data.angleZ;
+
+            playerToMove.position.x += data.vX;
+            playerToMove.position.y += data.vY;
+            playerToMove.position.z += data.vZ;
 
         }
     };

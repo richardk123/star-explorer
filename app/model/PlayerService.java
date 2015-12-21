@@ -27,7 +27,7 @@ public class PlayerService
 		player.setDefAngleY(mobileData.get(Mobile.ROTATION_Y).asDouble());
 		player.setDefAngleZ(mobileData.get(Mobile.ROTATION_Z).asDouble());
 		player.setGameStarted(true);
-		player.setSpeed(0.07);
+		player.setSpeed(0.03);
 	}
 
 	/**
@@ -46,9 +46,9 @@ public class PlayerService
 		double rotationY = mobileData.get(Mobile.ROTATION_Y).asDouble();
 		double rotationZ = mobileData.get(Mobile.ROTATION_Z).asDouble();
 
-		player.setAngleX(rotationX - player.getDefAngleX());
+		player.setAngleX(-(rotationX - player.getDefAngleX()));
 		player.setAngleY(rotationY - player.getDefAngleY() - Math.PI);
-		player.setAngleZ(rotationZ - player.getDefAngleZ());
+		player.setAngleZ(-(rotationZ - player.getDefAngleZ()));
 
 		// set last mobile data
 		player.setMobileData(mobileData);
@@ -65,7 +65,11 @@ public class PlayerService
 	{
 		player.setVy(-Math.sin(player.getAngleX()) * player.getSpeed());
 		player.setVz(Math.cos(player.getAngleX()) * player.getSpeed());
-		player.setVx(Math.sin(player.getAngleZ()) * player.getSpeed());
+//		player.setVx(Math.sin(player.getAngleZ()) * player.getSpeed());
+
+		player.setX(player.getX() + player.getVx());
+		player.setY(player.getY() + player.getVy());
+		player.setZ(player.getZ() + player.getVz());
 	}
 
 }
