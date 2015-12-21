@@ -43,6 +43,7 @@ $(function init() {
                 if (planes[data.keyConnector] == undefined)
                 {
                     planes[data.keyConnector] = createCube(data.x, data.y, data.z, true, 0xFF0000);
+                    scene.add(playerToMove);
                 }
 
                 playerToMove = planes[data.keyConnector];
