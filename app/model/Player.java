@@ -9,43 +9,41 @@ import play.mvc.WebSocket;
  */
 public class Player
 {
+	public static final int SHIELD_UP_MILLIS = 10000;
+	public static final int SPEED_BOOST_MILLIS = 5000;
+	public static double MAX_SPEED = 0.01;
+	public static final double MAX_ACCELERATION = 0.001;
+
 	private WebSocket.Out<JsonNode> mobileOut;
 	private WebSocket.Out<JsonNode> desktopOut;
 
 	public static final String POS_X = "x";
 	public static final String POS_Y = "y";
-	public static final String POS_Z = "z";
 
 	public static final String SPEED_X = "vX";
 	public static final String SPEED_Y = "vY";
-	public static final String SPEED_Z = "vZ";
 
-	public static final String ANGLE_X = "angleX";
-	public static final String ANGLE_Y = "angleY";
-	public static final String ANGLE_Z = "angleZ";
+	public static final String ANGLE = "angle";
 
 	private boolean gameStarted = false;
 	private JsonNode mobileData;
 
 	private String keyConnector;
 
+	private double angle = 0;
+
 	private double x = 0;
 	private double y = 0;
-	private double z = 0;
 
-	private double speed = 0;
+	private double acceleration = 0;
 
 	private double vx = 0;
 	private double vy = 0;
-	private double vz = 0;
 
-	private double defAngleX = 0;
-	private double defAngleY = 0;
-	private double defAngleZ = 0;
+	// is shield up?
+	private boolean shield;
 
-	private double angleX = 0;
-	private double angleY = 0;
-	private double angleZ = 0;
+	private boolean speedBoost = false;
 
 	public WebSocket.Out<JsonNode> getMobileOut()
 	{
@@ -87,16 +85,6 @@ public class Player
 		this.y = y;
 	}
 
-	public double getZ()
-	{
-		return z;
-	}
-
-	public void setZ(double z)
-	{
-		this.z = z;
-	}
-
 	public double getVx()
 	{
 		return vx;
@@ -117,74 +105,9 @@ public class Player
 		this.vy = vy;
 	}
 
-	public double getVz()
+	public double getSpeed()
 	{
-		return vz;
-	}
-
-	public void setVz(double vz)
-	{
-		this.vz = vz;
-	}
-
-	public double getDefAngleX()
-	{
-		return defAngleX;
-	}
-
-	public void setDefAngleX(double defAngleX)
-	{
-		this.defAngleX = defAngleX;
-	}
-
-	public double getDefAngleY()
-	{
-		return defAngleY;
-	}
-
-	public void setDefAngleY(double defAngleY)
-	{
-		this.defAngleY = defAngleY;
-	}
-
-	public double getDefAngleZ()
-	{
-		return defAngleZ;
-	}
-
-	public void setDefAngleZ(double defAngleZ)
-	{
-		this.defAngleZ = defAngleZ;
-	}
-
-	public double getAngleX()
-	{
-		return angleX;
-	}
-
-	public void setAngleX(double angleX)
-	{
-		this.angleX = angleX;
-	}
-
-	public double getAngleY()
-	{
-		return angleY;
-	}
-
-	public void setAngleY(double angleY)
-	{
-		this.angleY = angleY;
-	}
-
-	public double getAngleZ()
-	{
-		return angleZ;
-	}
-
-	public void setAngleZ(double angleZ)
-	{
-		this.angleZ = angleZ;
+		return Math.sqrt((getVx() * getVx()) + (getVy() * getVy()));
 	}
 
 	public String getKeyConnector()
@@ -217,13 +140,43 @@ public class Player
 		this.mobileData = mobileData;
 	}
 
-	public double getSpeed()
+	public double getAcceleration()
 	{
-		return speed;
+		return acceleration;
 	}
 
-	public void setSpeed(double speed)
+	public void setAcceleration(double acceleration)
 	{
-		this.speed = speed;
+		this.acceleration = acceleration;
+	}
+
+	public boolean isShield()
+	{
+		return shield;
+	}
+
+	public void setShield(boolean shield)
+	{
+		this.shield = shield;
+	}
+
+	public boolean isSpeedBoost()
+	{
+		return speedBoost;
+	}
+
+	public void setSpeedBoost(boolean speedBoost)
+	{
+		this.speedBoost = speedBoost;
+	}
+
+	public double getAngle()
+	{
+		return angle;
+	}
+
+	public void setAngle(double angle)
+	{
+		this.angle = angle;
 	}
 }

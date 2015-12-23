@@ -9,6 +9,7 @@ $(function init() {
     var desktopSocket = new WS("@routes.Desktop.ws(keyConnector).webSocketURL(request)")
 
     var planes = {};
+    var shields = {};
 
     desktopSocket.onmessage = function(event) {
         var data = JSON.parse(event.data);
@@ -32,32 +33,41 @@ $(function init() {
         }
         else if (data.type === 'playerData')
         {
-            var playerToMove;
+            var dataPlayer;
 
-            if (data.keyConnector == keyConnector)
+            if (planes[data.keyConnector] == undefined)
             {
-                playerToMove = player;
-            }
-            else
-            {
-                if (planes[data.keyConnector] == undefined)
-                {
-                    playerToMove = createCube(data.x, data.y, data.z, true, 0xFF0000);
-                    planes[data.keyConnector] = playerToMove;
-                    scene.add(playerToMove);
-                }
-
-                playerToMove = planes[data.keyConnector];
+                dataPlayer = createPlayer(data.x, data.y);
+                planes[data.keyConnector] = dataPlayer;
+                scene.add(dataPlayer);
             }
 
-            playerToMove.rotation.x = data.angleX;
-            playerToMove.rotation.y = data.angleY;
-            playerToMove.rotation.z = data.angleZ;
+            dataPlayer = planes[data.keyConnector];
 
-            playerToMove.position.x += data.vX;
-            playerToMove.position.y += data.vY;
-            playerToMove.position.z += data.vZ;
+            dataPlayer.rotation.z = data.angle;
+            dataPlayer.position.x += data.vX;
+            dataPlayer.position.y += data.vY;
+        }
+        else if(data.type === 'shield-up')
+        {
+            var dataPlayer = planes[data.keyConnector];
 
+            var texture = THREE.ImageUtils.loadTexture( '/assets/images/shield.png' );
+            var shield = new THREE.Mesh(
+                new THREE.PlaneGeometry(2, 2, 0),
+                new THREE.MeshBasicMaterial({
+                    map: texture
+                }));
+            dataPlayer.add(shield);
+            shields[data.keyConnector] = shield;
+
+        }
+        else if(data.type === 'shield-down')
+        {
+            var dataPlayer = planes[data.keyConnector];
+            var shield = shields[data.keyConnector];
+            dataPlayer.remove(shield);
+            delete shields[data.keyConnector];
         }
     };
 
@@ -65,13 +75,23 @@ $(function init() {
     {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-        camera.position.y = 2.5;
+        camera.position.x = 0;
+        camera.position.y = 0;
         camera.position.z = 5;
 
+        // Load the background texture
+        var texture = THREE.ImageUtils.loadTexture( '/assets/images/universe.jpg' );
+        var backgroundMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(71, 10, 0),
+            new THREE.MeshBasicMaterial({
+                map: texture
+            }));
+        scene.add(backgroundMesh);
+
         // create player
-        player = createCube(0, 0, 0, false, 0xFF0000);
+        player = createPlayer(0, 0);
+        planes[keyConnector] = player;
         player.add(camera);
-        scene.add(player);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -81,13 +101,12 @@ $(function init() {
         scene.add(light);
 
         var directionalLight = new THREE.DirectionalLight( 0x404040 );
-        directionalLight.position.x = 5;
-        directionalLight.position.y = 3;
-        directionalLight.position.z = 4;
+        directionalLight.position.x = 0;
+        directionalLight.position.y = 0;
+        directionalLight.position.z = 0;
         directionalLight.position.normalize();
         scene.add(directionalLight);
 
-        createMap();
         render();
     }
 
@@ -98,35 +117,26 @@ $(function init() {
         renderer.render(scene, camera);
     };
 
-    function createMap() {
 
-        for (z = 2; z < 80; z++) {
-            for (x = -2; x <= 2; x++) {
-                for (y = -2; y <= 2; y++) {
-                    if (Math.random() < z / 180) {
-                        scene.add(createCube(x, y, z, true, 0xffffff));
-                    }
-                }
-            }
-        }
-    }
-
-    function createCube(x, y, z, transparent, color)
+    function createPlayer(x, y)
     {
-        var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-        var material = new THREE.MeshLambertMaterial( {
-            color: color,
-            shading: THREE.FlatShading,
-            transparent: transparent,
-            opacity: 0.5
-        } );
-        var cube = new THREE.Mesh( geometry, material );
+        // Load the background texture
+        var texture = THREE.ImageUtils.loadTexture( '/assets/images/player.png' );
+        var ship = new THREE.Mesh(
+            new THREE.PlaneGeometry(1.7, 1, 0),
+            new THREE.MeshBasicMaterial({
+                shading: THREE.FlatShading,
+                map: texture,
+                transparent: true,
+                overdraw: true
+            }));
 
-        cube.position.x = x;
-        cube.position.y = y;
-        cube.position.z = z;
+        ship.position.x = x;
+        ship.position.y = y;
 
-        return cube;
+        scene.add(ship);
+
+        return ship;
     }
 
 });

@@ -1,8 +1,12 @@
 package model;
 
 import javax.annotation.Nonnull;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.Mobile;
 
 /**
@@ -23,11 +27,8 @@ public class PlayerService
 		// mobile data from phone
 		JsonNode mobileData = player.getMobileData();
 
-		player.setDefAngleX(mobileData.get(Mobile.ROTATION_X).asDouble());
-		player.setDefAngleY(mobileData.get(Mobile.ROTATION_Y).asDouble());
-		player.setDefAngleZ(mobileData.get(Mobile.ROTATION_Z).asDouble());
 		player.setGameStarted(true);
-		player.setSpeed(0.01);
+		player.setAcceleration(Player.MAX_ACCELERATION);
 	}
 
 	/**
@@ -42,34 +43,90 @@ public class PlayerService
 		assert player != null;
 		assert mobileData != null;
 
-		double rotationX = mobileData.get(Mobile.ROTATION_X).asDouble();
 		double rotationY = mobileData.get(Mobile.ROTATION_Y).asDouble();
-		double rotationZ = mobileData.get(Mobile.ROTATION_Z).asDouble();
 
-		player.setAngleX(-(rotationX - player.getDefAngleX()));
-		player.setAngleY(rotationY - player.getDefAngleY() - Math.PI);
-		player.setAngleZ(-(rotationZ - player.getDefAngleZ()));
+		player.setAngle(rotationY);
 
 		// set last mobile data
 		player.setMobileData(mobileData);
+	}
+
+	public void shieldUp(@Nonnull final Player player)
+	{
+		ObjectNode node = new ObjectMapper().createObjectNode();
+		node.put(Mobile.KEY_CONNECTOR, player.getKeyConnector());
+		node.put(Mobile.TYPE_FIELD, Mobile.TYPE_SHIELD_UP);
+		player.getDesktopOut().write(node);
+
+		player.setShield(true);
+
+		Timer timer = new Timer();
+		timer.schedule(
+				new TimerTask()
+				{
+					@Override
+					public void run()
+					{
+						player.setShield(false);
+
+						ObjectNode node = new ObjectMapper().createObjectNode();
+						node.put(Mobile.TYPE_FIELD, Mobile.TYPE_SHIELD_DOWN);
+						node.put(Mobile.KEY_CONNECTOR, player.getKeyConnector());
+						player.getDesktopOut().write(node);
+					}
+				},
+				Player.SHIELD_UP_MILLIS
+		);
+	}
+
+	public void boostSpeed(@Nonnull final Player player)
+	{
+		player.setSpeedBoost(true);
+
+		Timer timer = new Timer();
+		timer.schedule(
+				new TimerTask()
+				{
+					@Override
+					public void run()
+					{
+						player.setSpeedBoost(false);
+					}
+				},
+				Player.SPEED_BOOST_MILLIS
+		);
+	}
+
+	public void fireGun(@Nonnull Player player)
+	{
+
+	}
+
+	public void fireRocket(@Nonnull Player player)
+	{
+
 	}
 
 	/**
 	 * calculate physic
 	 *
 	 * @param player
-	 * @param timeInMilis
 	 */
 	public void calculatePlayerData(@Nonnull Player player,
 									int timeInMilis)
 	{
-		player.setVy(-Math.sin(player.getAngleX()) * player.getSpeed());
-		player.setVz(Math.cos(player.getAngleX()) * player.getSpeed());
-//		player.setVx(Math.sin(player.getAngleZ()) * player.getSpeed());
+
+		double speedBoost = player.isSpeedBoost() ? 3 : 1;
+
+		double speed = player.getSpeed();
+
+		player.setAcceleration((1 - (speed / (Player.MAX_SPEED * speedBoost))) * Player.MAX_ACCELERATION);
+
+		player.setVx(player.getVx() + (Math.cos(player.getAngle()) * player.getAcceleration()));
+		player.setVy(player.getVy() + (Math.sin(player.getAngle()) * player.getAcceleration()));
 
 		player.setX(player.getX() + player.getVx());
 		player.setY(player.getY() + player.getVy());
-		player.setZ(player.getZ() + player.getVz());
 	}
 
 }

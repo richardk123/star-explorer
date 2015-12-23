@@ -41,17 +41,13 @@ public class MessageService
 		node.put(Desktop.TYPE_FIELD, Desktop.TYPE_PLAYER_DATA);
 		node.put(Mobile.KEY_CONNECTOR, player.getKeyConnector());
 
-		node.put(Player.ANGLE_X, player.getAngleX());
-		node.put(Player.ANGLE_Y, player.getAngleY());
-		node.put(Player.ANGLE_Z, player.getAngleZ());
+		node.put(Player.ANGLE, player.getAngle());
 
 		node.put(Player.POS_X, player.getX());
 		node.put(Player.POS_Y, player.getY());
-		node.put(Player.POS_Z, player.getZ());
 
 		node.put(Player.SPEED_X, player.getVx());
 		node.put(Player.SPEED_Y, player.getVy());
-		node.put(Player.SPEED_Z, player.getVz());
 
 		return node;
 	}

@@ -18,7 +18,14 @@ import views.html.mobile;
 public class Mobile extends Controller
 {
 	public static final String TYPE_FIELD = "type";
+
 	public static final String TYPE_SENSOR_DATA = "sensorData";
+	public static final String TYPE_FIRE_ROCKET = "fire-rocket";
+	public static final String TYPE_FIRE_GUN = "fire-gun";
+	public static final String TYPE_SHIELD_UP = "shield-up";
+	public static final String TYPE_SHIELD_DOWN = "shield-down";
+	public static final String TYPE_BOOST_SPEED = "boost-speed";
+
 	public static final String KEY_CONNECTOR = "keyConnector";
 
 	public static final String ROTATION_X = "rotationX";
@@ -63,6 +70,10 @@ public class Mobile extends Controller
 								switch (mobileData.get(TYPE_FIELD).asText())
 								{
 									case TYPE_SENSOR_DATA: service.updatePlayerData(player, mobileData); break;
+									case TYPE_SHIELD_UP: service.shieldUp(player); break;
+									case TYPE_BOOST_SPEED: service.boostSpeed(player); break;
+									case TYPE_FIRE_GUN: service.fireGun(player); break;
+									case TYPE_FIRE_ROCKET: service.fireRocket(player); break;
 								}
 
 							}

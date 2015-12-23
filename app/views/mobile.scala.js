@@ -43,6 +43,26 @@ $(function ()
 		}
 	}, 20);
 
+	$("#speed").click(function() {
+
+		mobileSocket.send(JSON.stringify({type: "boost-speed"}));
+	});
+
+	$("#shield").click(function() {
+
+		mobileSocket.send(JSON.stringify({type: "shield-up"}));
+	});
+
+	$("#fire-gun").click(function() {
+
+		mobileSocket.send(JSON.stringify({type: "fire-gun"}));
+	});
+
+	$("#fire-rocket").click(function() {
+
+		mobileSocket.send(JSON.stringify({type: "fire-rocket"}));
+	});
+
 	function roundNumber(number)
 	{
 		return Math.round(number * 1000) / 1000;
